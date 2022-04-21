@@ -1,8 +1,9 @@
 ﻿using ChatAppFinal.Data;
 using ChatAppFinal.Models;
-using Microsoft.AspNetCore.Identity;
+using ChatAppFinal.ViewModels;
 using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using ChatAppFinal.Pages;
 
 namespace ChatAppFinal.Hubs
 {
@@ -12,14 +13,19 @@ namespace ChatAppFinal.Hubs
         public static List<string> rooms = new List<string>();
         private readonly ApplicationDbContext _context;
 
+
+        public HomeViewModel HomeViewModel;
+
         public ChatHub(ApplicationDbContext context)
         {
             _context = context;
+            HomeViewModel = new HomeViewModel();
         }
 
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            var userName = Context.User.Identity.Name;
+            await Clients.All.SendAsync("ReceiveMessage", userName, message);
         }
 
         public async Task RemoveFromGroup(string groupName)

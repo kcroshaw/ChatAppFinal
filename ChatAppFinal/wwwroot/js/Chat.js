@@ -7,6 +7,7 @@ document.getElementById("createRoomBtn").addEventListener("click", function (eve
     event.preventDefault();
 });
 
+
 //Disable the send button until connection is established.
 //document.getElementById("sendButton").disabled = true;
 
@@ -24,13 +25,15 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
-//document.getElementById("sendButton").addEventListener("click", function (event) {
-//    var message = document.getElementById("messageInput").value;
-//    connection.invoke("SendMessage", user, message).catch(function (err) {
-//        return console.error(err.toString());
-//    });
-//    event.preventDefault();
-//});
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    var message = document.getElementById("messageInput").value;
+    connection.invoke("SendMessage", message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+//document.getElementById("sendButton").addEventListener("click", sendMessageToAll(user))
 
 //function sendMessageToAll(user) {
 //    var message = document.getElementById("messageInput").value;
@@ -73,19 +76,26 @@ connection.start().then(function () {
 //    sendButton.disabled = true;
 //}
 
-//connection.on("ReceiveMessage", function (user, message) {
-//    var li = document.createElement("li");
-//    document.getElementById("messagesList").appendChild(li);
-//    li.textContent = `${user} says ${message}`;
-//});
+connection.on("ReceiveMessage", function (user, message) {
+    var li = document.createElement("li");
+    document.getElementById("messagesList").appendChild(li);
+    li.textContent = `${user}: ${message}`;
+});
 
-//connection.on("RoomCreated", function (roomName) {
-//    var groupElement = document.getElementById("createdRooms");
-//    var option = document.createElement("ul");
-//    option.text = room;
-//    option.value = room;
-//    groupElement.add(option);
-//});
+connection.on("RoomCreated", function (roomName) {
+    var ul = document.getElementById("createdRooms");
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    //a.setAttribute(roomName, roomName);
+    a.id = roomName;
+    //a.innerHTML = roomName;
+    a.textContent = roomName;
+    a.className = "btn btn-outline-light";
+    li.appendChild(a);
+    //option.text = room;
+    //option.value = room;
+    ul.appendChild(li);
+});
 
 //connection.start().then(function () {
 //}).catch(function (err) {

@@ -2,10 +2,8 @@
 using ChatAppFinal.Interfaces;
 using ChatAppFinal.Models;
 using ChatAppFinal.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Security.Claims;
 
 namespace ChatAppFinal.Pages
 {
@@ -17,7 +15,7 @@ namespace ChatAppFinal.Pages
 
         public IEnumerable<Room> RoomsList { get; set; }
         public IEnumerable<Message> Messages { get; set; }
-        public string userName;
+        public string userName = "";
 
         [BindProperty]
         public HomeViewModel HomeViewModel { get; set; }
@@ -35,7 +33,7 @@ namespace ChatAppFinal.Pages
                 RoomsList = _unitOfWork.Room.List();
 
                 userName = User.Identity.Name;
-
+                
                 return Page();
             }
             else
