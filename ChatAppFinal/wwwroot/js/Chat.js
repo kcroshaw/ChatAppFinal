@@ -1,4 +1,5 @@
 ﻿var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+const users = [];
 
 document.getElementById("createRoomBtn").addEventListener("click", function (event) {
     connection.invoke("CreateRoom", document.getElementById("roomName").value).catch(function (err) {
@@ -38,21 +39,25 @@ connection.on("RoomCreated", function (roomName) {
 });
 
 connection.on("UserConnected", function (connectedUser) {
+    users.push(connectedUser);
     var ul = document.getElementById("connectedUsers");
     var li = document.createElement("li");
-    var a = document.createElement("a");
     li.id = connectedUser;
     li.textContent = connectedUser;
-    ul.appendChild(li);
+    ul.innerHTML = users;
 });
 
 connection.on("UserDisconnected", function (connectedUser) {
+    var index = users.indexOf(connectedUser);
+    if (index > -1) {
+        users.splice(index, 1)
+    }
     var ul = document.getElementById("connectedUsers");
     var li = document.createElement("li");
     var a = document.createElement("a");
     li.id = connectedUser;
     li.textContent = connectedUser + " disconnected";
-    ul.appendChild(li);
+    ul.innerHTML = users;
 });
 
 // Get the modal
