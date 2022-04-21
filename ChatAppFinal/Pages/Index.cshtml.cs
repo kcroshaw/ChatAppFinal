@@ -14,7 +14,7 @@ namespace ChatAppFinal.Pages
         private readonly IUnitOfWork _unitOfWork;
 
         public IEnumerable<Room> RoomsList { get; set; }
-        public IEnumerable<Message> Messages { get; set; }
+        public IEnumerable<Message> MessagesList { get; set; }
         public string userName = "";
 
         [BindProperty]
@@ -31,6 +31,7 @@ namespace ChatAppFinal.Pages
             if (User.Identity.IsAuthenticated)
             {
                 RoomsList = _unitOfWork.Room.List();
+                MessagesList = _unitOfWork.Message.List(u => u.ToRoomId == 41);
 
                 userName = User.Identity.Name;
                 

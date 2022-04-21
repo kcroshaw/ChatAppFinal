@@ -25,7 +25,17 @@ namespace ChatAppFinal.Hubs
         public async Task SendMessage(string message)
         {
             var userName = Context.User.Identity.Name;
-            await Clients.All.SendAsync("ReceiveMessage", userName, message);
+            var messageToDB = new Message()
+            {
+                Content = message,
+                FromUser = userName,
+                ToRoomId = 41,
+                Timestamp = DateTime.Now.ToString("MM-dd-yy hhh:mmm:ss tt")
+            };
+            _context.Message.Add(messageToDB);
+            var date = DateTime.Now.ToString("MM-dd-yy hhh:mmm:ss tt");
+            await _context.SaveChangesAsync();
+            await Clients.All.SendAsync("ReceiveMessage", userName, message, date);
         }
 
         public async Task RemoveFromGroup(string groupName)
@@ -67,8 +77,15 @@ namespace ChatAppFinal.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
+            var userName = Context.User.Identity.Name;
+            await Clients.All.SendAsync("UserConnected", userName);
             await base.OnConnectedAsync();
+        }
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var userName = Context.User.Identity.Name;
+            await Clients.All.SendAsync("UserDisconnected", userName);
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }
